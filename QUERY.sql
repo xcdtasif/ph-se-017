@@ -2,9 +2,9 @@
 -- Database and table definitions
 -- ============================================================
 -- Database setup
-DROP DATABASE IF EXISTS football_ticket_booking_system;
+DROP DATABASE IF EXISTS module_017;
 
-CREATE DATABASE football_ticket_booking_system;
+CREATE DATABASE module_017;
 
 -- Users table
 DROP TABLE IF EXISTS Users;
