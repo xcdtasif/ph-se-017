@@ -1,7 +1,6 @@
 -- ============================================================
 -- Database and table definitions
 -- ============================================================
-
 -- Database setup
 DROP DATABASE IF EXISTS football_ticket_booking_system;
 
@@ -10,42 +9,144 @@ CREATE DATABASE football_ticket_booking_system;
 -- Users table
 DROP TABLE IF EXISTS Users;
 
-CREATE TABLE Users (
-  user_id int PRIMARY KEY,
-  full_name varchar(100) NOT NULL,
-  email varchar(150) NOT NULL UNIQUE,
-  role varchar(20) NOT NULL CHECK (role IN ('Ticket Manager', 'Football Fan')),
-  phone_number varchar(20)
-);
+CREATE TABLE
+  Users (
+    user_id int PRIMARY KEY,
+    full_name varchar(100) NOT NULL,
+    email varchar(150) NOT NULL UNIQUE,
+    role varchar(20) NOT NULL CHECK (role IN ('Ticket Manager', 'Football Fan')),
+    phone_number varchar(20)
+  );
 
 -- Matches table
 DROP TABLE IF EXISTS Matches;
 
-CREATE TABLE Matches (
-  match_id int PRIMARY KEY,
-  fixture varchar(150) NOT NULL,
-  tournament_category varchar(100) NOT NULL,
-  base_ticket_price numeric(10, 2) NOT NULL CHECK (base_ticket_price >= 0),
-  match_status varchar(20) NOT NULL CHECK (
-    match_status IN (
-      'Available',
-      'Selling Fast',
-      'Sold Out',
-      'Postponed'
+CREATE TABLE
+  Matches (
+    match_id int PRIMARY KEY,
+    fixture varchar(150) NOT NULL,
+    tournament_category varchar(100) NOT NULL,
+    base_ticket_price numeric(10, 2) NOT NULL CHECK (base_ticket_price >= 0),
+    match_status varchar(20) NOT NULL CHECK (
+      match_status IN (
+        'Available',
+        'Selling Fast',
+        'Sold Out',
+        'Postponed'
+      )
     )
-  )
-);
+  );
 
 -- Bookings table
 DROP TABLE IF EXISTS Bookings;
 
-CREATE TABLE Bookings (
-  booking_id int PRIMARY KEY,
-  user_id int NOT NULL REFERENCES Users (user_id),
-  match_id int NOT NULL REFERENCES Matches (match_id),
-  seat_number varchar(10),
-  payment_status varchar(20) CHECK (
-    payment_status IN ('Pending', 'Confirmed', 'Cancelled', 'Refunded')
+CREATE TABLE
+  Bookings (
+    booking_id int PRIMARY KEY,
+    user_id int NOT NULL REFERENCES Users (user_id),
+    match_id int NOT NULL REFERENCES Matches (match_id),
+    seat_number varchar(10),
+    payment_status varchar(20) CHECK (
+      payment_status IN ('Pending', 'Confirmed', 'Cancelled', 'Refunded')
+    ),
+    total_cost numeric(10, 2) NOT NULL CHECK (total_cost >= 0)
+  );
+
+-- ============================================================
+-- Sample data
+-- ============================================================
+-- Users data
+INSERT INTO
+  Users (user_id, full_name, email, role, phone_number)
+VALUES
+  (
+    1,
+    'Tanvir Rahman',
+    'tanvir@mail.com',
+    'Football Fan',
+    '+8801711111111'
   ),
-  total_cost numeric(10, 2) NOT NULL CHECK (total_cost >= 0)
-);
+  (
+    2,
+    'Asif Haque',
+    'asif@mail.com',
+    'Football Fan',
+    '+8801722222222'
+  ),
+  (
+    3,
+    'Sajjad Rahman',
+    'sajjad@mail.com',
+    'Ticket Manager',
+    '+8801733333333'
+  ),
+  (
+    4,
+    'Jannat Ara',
+    'jannat@mail.com',
+    'Football Fan',
+    NULL
+  );
+
+-- Matches data
+INSERT INTO
+  Matches (
+    match_id,
+    fixture,
+    tournament_category,
+    base_ticket_price,
+    match_status
+  )
+VALUES
+  (
+    101,
+    'Real Madrid vs Barcelona',
+    'Champions League',
+    150.00,
+    'Available'
+  ),
+  (
+    102,
+    'Man City vs Liverpool',
+    'Premier League',
+    120.00,
+    'Selling Fast'
+  ),
+  (
+    103,
+    'Bayern Munich vs PSG',
+    'Champions League',
+    130.00,
+    'Available'
+  ),
+  (
+    104,
+    'AC Milan vs Inter Milan',
+    'Serie A',
+    90.00,
+    'Sold Out'
+  ),
+  (
+    105,
+    'Juventus vs Roma',
+    'Serie A',
+    80.00,
+    'Available'
+  );
+
+-- Bookings data
+INSERT INTO
+  Bookings (
+    booking_id,
+    user_id,
+    match_id,
+    seat_number,
+    payment_status,
+    total_cost
+  )
+VALUES
+  (501, 1, 101, 'A-12', 'Confirmed', 150.00),
+  (502, 1, 102, 'B-04', 'Confirmed', 120.00),
+  (503, 2, 101, 'A-13', 'Confirmed', 150.00),
+  (504, 2, 101, NULL, NULL, 150.00),
+  (505, 3, 102, 'C-20', 'Pending', 120.00);
